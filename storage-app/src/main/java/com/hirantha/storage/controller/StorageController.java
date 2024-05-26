@@ -32,15 +32,15 @@ public class StorageController {
     return storageService.uploadFile(userName, file, fileName, tags, visibility);
   }
 
-  @GetMapping("/download/{id}")
-  public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) {
-    return storageService.downloadFile(id);
-  }
-
   @PostMapping("/list")
   public StoredFileResponseDto listFiles(@RequestHeader("X-User-Name") String userName,
       @RequestBody(required = false) PageDto pageDto) {
     return storageService.listFiles(userName, pageDto);
+  }
+
+  @GetMapping("/download/{id}")
+  public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) {
+    return storageService.downloadFile(id);
   }
 
 }

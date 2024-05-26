@@ -7,14 +7,14 @@ import org.springframework.data.domain.Page;
 
 public class StoredFileMapper {
 
-  public static StoredFileDto toStoredFileDto(StoredFile storedFile) {
+  public static StoredFileDto toStoredFileDto(StoredFile storedFile, String downloadPath) {
     return StoredFileDto.builder()
         .id(storedFile.getId())
         .userName(storedFile.getUserName())
         .fileName(storedFile.getFileName())
         .fileType(storedFile.getFileType())
         .fileSize(storedFile.getFileSize())
-        .fileLink(storedFile.getFileLink())
+        .fileLink(downloadPath + storedFile.getId())
         .tags(storedFile.getTags())
         .visibility(storedFile.getVisibility())
         .uploadedDate(storedFile.getUploadedDate())
@@ -22,13 +22,13 @@ public class StoredFileMapper {
         .build();
   }
 
-  public static StoredFileDto toStoredFilesForDownload(StoredFile storedFile, String path) {
+  public static StoredFileDto toStoredFilesForDownload(StoredFile storedFile, String downloadPath) {
     return StoredFileDto.builder()
         .id(storedFile.getId())
         .fileName(storedFile.getFileName())
         .fileType(storedFile.getFileType())
         .fileSize(storedFile.getFileSize())
-        .fileLink(path + storedFile.getId())
+        .fileLink(downloadPath + storedFile.getId())
         .tags(storedFile.getTags())
         .visibility(storedFile.getVisibility())
         .uploadedDate(storedFile.getUploadedDate())

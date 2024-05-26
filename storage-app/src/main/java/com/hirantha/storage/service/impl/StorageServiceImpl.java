@@ -92,7 +92,9 @@ public class StorageServiceImpl implements StorageService {
       throw new ApiException(ErrorConstants.ERROR_CREATING_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    return StoredFileMapper.toStoredFileDto(storedFileRepository.save(storedFile));
+    final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
+
+    return StoredFileMapper.toStoredFileDto(storedFileRepository.save(storedFile), downloadPath);
   }
 
   @Override
