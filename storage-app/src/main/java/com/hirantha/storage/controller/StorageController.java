@@ -1,5 +1,6 @@
 package com.hirantha.storage.controller;
 
+import com.hirantha.storage.dto.PageDto;
 import com.hirantha.storage.dto.StoredFileDto;
 import com.hirantha.storage.dto.StoredFileResponseDto;
 import com.hirantha.storage.service.StorageService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -36,8 +38,9 @@ public class StorageController {
   }
 
   @PostMapping("/list")
-  public StoredFileResponseDto listFiles(@RequestHeader("X-User-Name") String userName) {
-    return storageService.listFiles(userName);
+  public StoredFileResponseDto listFiles(@RequestHeader("X-User-Name") String userName,
+      @RequestBody PageDto pageDto) {
+    return storageService.listFiles(userName, pageDto);
   }
 
 }

@@ -1,6 +1,7 @@
 package com.hirantha.storage.service.impl;
 
 import com.hirantha.storage.constants.ErrorConstants;
+import com.hirantha.storage.dto.PageDto;
 import com.hirantha.storage.dto.StoredFileDto;
 import com.hirantha.storage.dto.StoredFileResponseDto;
 import com.hirantha.storage.enums.Visibility;
@@ -115,12 +116,22 @@ public class StorageServiceImpl implements StorageService {
   }
 
   @Override
-  public StoredFileResponseDto listFiles(String userName) {
+  public StoredFileResponseDto listFiles(String userName, PageDto pageDto) {
     final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
 
-    List<StoredFile> privateFiles = storedFileRepository.findByUserNameAndVisibility(userName,
-        Visibility.PRIVATE);
-    List<StoredFile> publicFiles = storedFileRepository.findByVisibility(Visibility.PUBLIC);
+    List<StoredFile> privateFiles;
+    List<StoredFile> publicFiles;
+
+    if (pageDto.getFilterTags() != null && !pageDto.getFilterTags().isEmpty()) {
+      privateFiles = storedFileRepository.findByUserNameAndVisibilityAndTagsIn(userName,
+          Visibility.PRIVATE, pageDto.getFilterTags());
+      publicFiles = storedFileRepository.findByVisibilityAndTagsIn(Visibility.PUBLIC,
+          pageDto.getFilterTags());
+    } else {
+      privateFiles = storedFileRepository.findByUserNameAndVisibility(userName,
+          Visibility.PRIVATE);
+      publicFiles = storedFileRepository.findByVisibility(Visibility.PUBLIC);
+    }
 
     return StoredFileResponseDto.builder()
         .userName(userName)

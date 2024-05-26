@@ -15,4 +15,9 @@ public interface StoredFileRepository extends MongoRepository<StoredFile, String
 
   List<StoredFile> findByVisibility(Visibility visibility);
 
+  List<StoredFile> findByUserNameAndVisibilityAndTagsIn(String userName, Visibility visibility,
+      List<String> tags);
+
+  List<StoredFile> findByVisibilityAndTagsIn(Visibility visibility, List<String> tags);
+
 }

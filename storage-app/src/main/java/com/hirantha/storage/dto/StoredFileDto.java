@@ -28,7 +28,7 @@ public class StoredFileDto {
 
   private Visibility visibility;
 
-  private Date uplodedDate;
+  private Date uploadedDate;
 
   private Date modifiedDate;
 

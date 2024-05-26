@@ -16,7 +16,7 @@ public class StoredFileMapper {
         .fileLink(storedFile.getFileLink())
         .tags(storedFile.getTags())
         .visibility(storedFile.getVisibility())
-        .uplodedDate(storedFile.getUplodedDate())
+        .uploadedDate(storedFile.getUploadedDate())
         .modifiedDate(storedFile.getModifiedDate())
         .build();
   }
@@ -30,7 +30,7 @@ public class StoredFileMapper {
         .fileLink(path + storedFile.getId())
         .tags(storedFile.getTags())
         .visibility(storedFile.getVisibility())
-        .uplodedDate(storedFile.getUplodedDate())
+        .uploadedDate(storedFile.getUploadedDate())
         .modifiedDate(storedFile.getModifiedDate())
         .build();
   }

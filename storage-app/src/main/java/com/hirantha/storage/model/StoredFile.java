@@ -36,7 +36,7 @@ public class StoredFile {
   private Visibility visibility;
 
   @CreatedDate
-  private Date uplodedDate;
+  private Date uploadedDate;
 
   @LastModifiedDate
   private Date modifiedDate;

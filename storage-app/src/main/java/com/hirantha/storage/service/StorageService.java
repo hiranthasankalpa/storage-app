@@ -1,5 +1,6 @@
 package com.hirantha.storage.service;
 
+import com.hirantha.storage.dto.PageDto;
 import com.hirantha.storage.dto.StoredFileDto;
 import com.hirantha.storage.dto.StoredFileResponseDto;
 import org.springframework.core.io.InputStreamResource;
@@ -13,6 +14,6 @@ public interface StorageService {
 
   ResponseEntity<InputStreamResource> downloadFile(String id);
 
-  StoredFileResponseDto listFiles(String userName);
+  StoredFileResponseDto listFiles(String userName, PageDto pageDto);
 
 }
