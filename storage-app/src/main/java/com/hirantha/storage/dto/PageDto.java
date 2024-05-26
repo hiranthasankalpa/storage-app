@@ -3,8 +3,6 @@ package com.hirantha.storage.dto;
 import com.hirantha.storage.enums.SortField;
 import java.util.List;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 

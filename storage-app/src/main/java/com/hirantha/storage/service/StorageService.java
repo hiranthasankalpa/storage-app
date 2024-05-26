@@ -12,6 +12,8 @@ public interface StorageService {
   StoredFileDto uploadFile(String userName, MultipartFile file, String fileName, String tags,
       String visibility);
 
+  StoredFileDto renameFile(String userName, String id, String fileName);
+
   ResponseEntity<InputStreamResource> downloadFile(String id);
 
   StoredFileResponseDto listFiles(String userName, PageDto pageDto);

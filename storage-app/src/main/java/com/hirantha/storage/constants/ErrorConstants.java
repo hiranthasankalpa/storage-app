@@ -12,6 +12,7 @@ public final class ErrorConstants {
   public static final String NO_SUCH_FILE = "File not present!";
   public static final String ERROR_CREATING_FILE = "Error occurred while creating file!";
   public static final String FILE_NOT_FOUND = "File not found on disk!";
+  public static final String NO_ACCESS_TO_FILE = "You do not have access to rename the file!";
 
   private ErrorConstants() {
   }

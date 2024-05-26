@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,9 +91,37 @@ public class StorageServiceImpl implements StorageService {
       throw new ApiException(ErrorConstants.ERROR_CREATING_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
+    return StoredFileMapper.toStoredFileDto(storedFileRepository.save(storedFile),
+        getDownloadPath());
+  }
 
-    return StoredFileMapper.toStoredFileDto(storedFileRepository.save(storedFile), downloadPath);
+  @Override
+  public StoredFileDto renameFile(String userName, String id, String fileName) {
+
+    if (StringUtils.isBlank(fileName)) {
+      throw new ApiException(ErrorConstants.INVALID_FILE_NAME, HttpStatus.BAD_REQUEST);
+    }
+
+    Optional<StoredFile> storedFileOptional = storedFileRepository.findById(id);
+
+    if (storedFileOptional.isEmpty()) {
+      throw new ApiException(ErrorConstants.NO_SUCH_FILE, HttpStatus.BAD_REQUEST);
+    }
+
+    StoredFile storedFile = storedFileOptional.get();
+
+    if (!storedFile.getUserName().equals(userName)) {
+      throw new ApiException(ErrorConstants.NO_ACCESS_TO_FILE, HttpStatus.UNAUTHORIZED);
+    }
+
+    storedFile.setFileName(fileName);
+
+    if (!storedFileRepository.findByFileNameIgnoreCase(fileName).isEmpty()) {
+      throw new ApiException(ErrorConstants.FILE_NAME_EXISTS, HttpStatus.BAD_REQUEST);
+    }
+
+    return StoredFileMapper.toStoredFileDto(storedFileRepository.save(storedFile),
+        getDownloadPath());
   }
 
   @Override
@@ -122,7 +149,6 @@ public class StorageServiceImpl implements StorageService {
 
   @Override
   public StoredFileResponseDto listFiles(String userName, PageDto pageDto) {
-    final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
 
     Page<StoredFile> privateFiles;
     Page<StoredFile> publicFiles;
@@ -131,7 +157,8 @@ public class StorageServiceImpl implements StorageService {
       pageDto = new PageDto();
     }
 
-    Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSizePerPage(), pageDto.getSortDirection(), pageDto.getSortField().getFieldName());
+    Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSizePerPage(),
+        pageDto.getSortDirection(), pageDto.getSortField().getFieldName());
 
     if (pageDto.getFilterTags() != null && !pageDto.getFilterTags().isEmpty()) {
       privateFiles = storedFileRepository.findByUserNameAndVisibilityAndTagsIn(userName,
@@ -146,9 +173,9 @@ public class StorageServiceImpl implements StorageService {
 
     return StoredFileResponseDto.builder()
         .userName(userName)
-        .privateFiles(StoredFileMapper.toStoredFileList(privateFiles, downloadPath))
+        .privateFiles(StoredFileMapper.toStoredFileList(privateFiles, getDownloadPath()))
         .totalPrivateFiles(privateFiles.getTotalElements())
-        .publicFiles(StoredFileMapper.toStoredFileList(publicFiles, downloadPath))
+        .publicFiles(StoredFileMapper.toStoredFileList(publicFiles, getDownloadPath()))
         .totalPublicFiles(publicFiles.getTotalElements())
         .build();
   }
@@ -184,6 +211,10 @@ public class StorageServiceImpl implements StorageService {
       // TODO: check files byte by byte
       throw new ApiException(ErrorConstants.FILE_CONTENT_EXISTS, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  private String getDownloadPath() {
+    return "http://localhost:" + port + path + "/files/download" + "/";
   }
 
 }
