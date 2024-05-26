@@ -1,0 +1,8 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1/storage-app
+
+spring:
+  application:
+    name: storage-app
