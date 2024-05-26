@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public class StorageController {
   }
 
   @PutMapping("/rename")
-  public StoredFileDto listFiles(@RequestHeader("X-User-Name") String userName,
+  public StoredFileDto renameFile(@RequestHeader("X-User-Name") String userName,
       @RequestBody StoredFileDto storedFileDto) {
     return storageService.renameFile(userName, storedFileDto.getId(), storedFileDto.getFileName());
   }
@@ -43,6 +44,12 @@ public class StorageController {
   public StoredFileResponseDto listFiles(@RequestHeader("X-User-Name") String userName,
       @RequestBody(required = false) PageDto pageDto) {
     return storageService.listFiles(userName, pageDto);
+  }
+
+  @DeleteMapping("/delete/{id}")
+  public String deleteFile(@RequestHeader("X-User-Name") String userName,
+      @PathVariable String id) {
+    return storageService.deleteFile(userName, id);
   }
 
   @GetMapping("/download/{id}")

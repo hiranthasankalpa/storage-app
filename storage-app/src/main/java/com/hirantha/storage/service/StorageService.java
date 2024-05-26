@@ -16,6 +16,8 @@ public interface StorageService {
 
   ResponseEntity<InputStreamResource> downloadFile(String id);
 
+  String deleteFile(String userName, String id);
+
   StoredFileResponseDto listFiles(String userName, PageDto pageDto);
 
 }

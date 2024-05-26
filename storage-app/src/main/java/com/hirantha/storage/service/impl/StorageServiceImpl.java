@@ -125,6 +125,31 @@ public class StorageServiceImpl implements StorageService {
   }
 
   @Override
+  public String deleteFile(String userName, String id) {
+
+    Optional<StoredFile> storedFileOptional = storedFileRepository.findById(id);
+
+    if (storedFileOptional.isEmpty()) {
+      throw new ApiException(ErrorConstants.NO_SUCH_FILE, HttpStatus.BAD_REQUEST);
+    }
+
+    StoredFile storedFile = storedFileOptional.get();
+
+    if (!storedFile.getUserName().equals(userName)) {
+      throw new ApiException(ErrorConstants.NO_ACCESS_TO_FILE, HttpStatus.UNAUTHORIZED);
+    }
+
+    File file = new File(storedFile.getFileLink());
+    if (file.delete()) {
+      storedFileRepository.delete(storedFile);
+    } else {
+      throw new ApiException(ErrorConstants.ERROR_DELETING_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return "File successfully deleted!";
+  }
+
+  @Override
   public ResponseEntity<InputStreamResource> downloadFile(String id) {
 
     Optional<StoredFile> storedFileOptional = storedFileRepository.findById(id);
