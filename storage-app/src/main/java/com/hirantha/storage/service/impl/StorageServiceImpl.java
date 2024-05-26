@@ -13,10 +13,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,14 +45,6 @@ public class StorageServiceImpl implements StorageService {
   @Value("${server.servlet.context-path}")
   private String path;
 
-  private String ip;
-
-  public List<StoredFileDto> getAllFilesForUser(String username) {
-    List<StoredFileDto> files = new ArrayList<>();
-
-    return files;
-  }
-
   @Override
   public StoredFileDto uploadFile(String userName, MultipartFile file, String fileName, String tags,
       String visibility) throws IOException {
@@ -72,7 +60,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     File directory = new File(filePath);
-    if (!directory.exists()){
+    if (!directory.exists()) {
       boolean done = directory.mkdirs();
       log.info(String.valueOf(done));
     }
@@ -112,25 +100,15 @@ public class StorageServiceImpl implements StorageService {
 
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        .header("Content-disposition", "attachment; filename="+ storedFile.getFileName())
+        .header("Content-disposition", "attachment; filename=" + storedFile.getFileName())
         .body(resource);
   }
 
   public StoredFileResponseDto getAllFiles(String userName) {
+    final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
 
-    if (ip == null) {
-      try {
-        ip = getIp();
-      } catch (Exception e) {
-        log.warn(e.getMessage());
-        log.warn("Unable to retrieve actual IP, using localhost!");
-        ip = "localhost";
-      }
-    }
-
-    final String downloadPath = "http://" + ip + ":" + port + path + "/file/download"+ "/" ;
-
-    List<StoredFile> privateFiles = storedFileRepository.findByUserNameAndVisibility(userName, Visibility.PRIVATE);
+    List<StoredFile> privateFiles = storedFileRepository.findByUserNameAndVisibility(userName,
+        Visibility.PRIVATE);
     List<StoredFile> publicFiles = storedFileRepository.findByVisibility(Visibility.PUBLIC);
 
     StoredFileResponseDto storedFileResponseDto = StoredFileResponseDto.builder()
@@ -153,23 +131,23 @@ public class StorageServiceImpl implements StorageService {
   private void validateInputs(String userName, MultipartFile file, String fileName, String tags,
       String visibility) {
 
-    if(StringUtils.isBlank(userName)) {
+    if (StringUtils.isBlank(userName)) {
       throw new ApiException(ErrorConstants.INVALID_USER_NAME, HttpStatus.BAD_REQUEST);
     }
 
-    if(!StringUtils.isAlphanumeric(userName)) {
+    if (!StringUtils.isAlphanumeric(userName)) {
       throw new ApiException(ErrorConstants.NON_ALPHANUMERIC_USER_NAME, HttpStatus.BAD_REQUEST);
     }
 
-    if(!EnumUtils.isValidEnum(Visibility.class, visibility)) {
+    if (!EnumUtils.isValidEnum(Visibility.class, visibility)) {
       throw new ApiException(ErrorConstants.VISIBILITY_ENUM_INVALID, HttpStatus.BAD_REQUEST);
     }
 
-    if(StringUtils.isBlank(fileName)) {
+    if (StringUtils.isBlank(fileName)) {
       throw new ApiException(ErrorConstants.INVALID_FILE_NAME, HttpStatus.BAD_REQUEST);
     }
 
-    if(file.isEmpty()) {
+    if (file.isEmpty()) {
       throw new ApiException(ErrorConstants.EMPTY_FILE, HttpStatus.BAD_REQUEST);
     }
 
@@ -183,11 +161,4 @@ public class StorageServiceImpl implements StorageService {
     }
   }
 
-  private String getIp() throws SocketException, UnknownHostException {
-    try (final DatagramSocket datagramSocket = new DatagramSocket()) {
-      datagramSocket.connect(InetAddress.getByName("8.8.8.8"), 12345);
-      return datagramSocket.getLocalAddress().getHostAddress();
-    }
-
-  }
 }

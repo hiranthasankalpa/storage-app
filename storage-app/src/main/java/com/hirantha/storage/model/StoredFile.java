@@ -1,7 +1,6 @@
 package com.hirantha.storage.model;
 
 import com.hirantha.storage.enums.Visibility;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EnumType;
