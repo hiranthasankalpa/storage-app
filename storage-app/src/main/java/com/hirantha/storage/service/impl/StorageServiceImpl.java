@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,9 @@ public class StorageServiceImpl implements StorageService {
   public StoredFileDto uploadFile(String userName, MultipartFile file, String fileName, String tags,
       String visibility) {
 
-    validateInputs(userName, file, fileName, tags, visibility);
+    List<String> tagsList = Arrays.asList(tags.split(",", -1));
+
+    validateInputs(userName, file, fileName, tagsList, visibility);
 
     String filePath = "/storage-app/files";
 
@@ -81,13 +84,14 @@ public class StorageServiceImpl implements StorageService {
           .fileType(tika.detect(file.getInputStream()))
           .fileSize(file.getSize())
           .fileLink(filePath)
-          .tags(Arrays.asList(tags.split(",", -1)))
+          .tags(tagsList)
           .visibility(Visibility.valueOf(visibility))
           .build();
 
       file.transferTo(new File(filePath));
     } catch (IOException ex) {
       log.error("File could not be created");
+      log.error(ex.getMessage());
       throw new ApiException(ErrorConstants.ERROR_CREATING_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -205,8 +209,8 @@ public class StorageServiceImpl implements StorageService {
         .build();
   }
 
-  private void validateInputs(String userName, MultipartFile file, String fileName, String tags,
-      String visibility) {
+  private void validateInputs(String userName, MultipartFile file, String fileName,
+      List<String> tagsList, String visibility) {
 
     if (StringUtils.isBlank(userName)) {
       throw new ApiException(ErrorConstants.INVALID_USER_NAME, HttpStatus.BAD_REQUEST);
@@ -218,6 +222,10 @@ public class StorageServiceImpl implements StorageService {
 
     if (!EnumUtils.isValidEnum(Visibility.class, visibility)) {
       throw new ApiException(ErrorConstants.VISIBILITY_ENUM_INVALID, HttpStatus.BAD_REQUEST);
+    }
+
+    if (tagsList.size() > 5) {
+      throw new ApiException(ErrorConstants.TOO_MANY_TAGS, HttpStatus.BAD_REQUEST);
     }
 
     if (StringUtils.isBlank(fileName)) {
