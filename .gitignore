@@ -34,7 +34,3 @@ target/
 .mvn/
 !**/src/main/**/target/
 !**/src/test/**/target/
-
-# project exclusions #
-files/
-.env
