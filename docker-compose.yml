@@ -17,6 +17,7 @@ services:
   storage-app:
     depends_on:
       - mongo_db
+    image: storage_app
     container_name: storage_app
     hostname: storage_app
     build: ./storage-app

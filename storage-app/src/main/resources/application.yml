@@ -6,3 +6,6 @@ server:
 spring:
   application:
     name: storage-app
+  data:
+    mongodb:
+      uri: mongodb://root:storage_app@localhost:27017/storage_app_db?authSource=admin
