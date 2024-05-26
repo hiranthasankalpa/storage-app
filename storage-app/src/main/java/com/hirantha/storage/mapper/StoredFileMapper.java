@@ -3,6 +3,7 @@ package com.hirantha.storage.mapper;
 import com.hirantha.storage.dto.StoredFileDto;
 import com.hirantha.storage.model.StoredFile;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 public class StoredFileMapper {
 
@@ -35,7 +36,7 @@ public class StoredFileMapper {
         .build();
   }
 
-  public static List<StoredFileDto> toStoredFileList(List<StoredFile> storedFiles, String path) {
+  public static List<StoredFileDto> toStoredFileList(Page<StoredFile> storedFiles, String path) {
     return storedFiles.stream()
         .map((StoredFile storedFile) -> toStoredFilesForDownload(storedFile, path)).toList();
   }

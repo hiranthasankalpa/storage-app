@@ -24,6 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -119,24 +122,32 @@ public class StorageServiceImpl implements StorageService {
   public StoredFileResponseDto listFiles(String userName, PageDto pageDto) {
     final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
 
-    List<StoredFile> privateFiles;
-    List<StoredFile> publicFiles;
+    Page<StoredFile> privateFiles;
+    Page<StoredFile> publicFiles;
+
+    if (pageDto == null) {
+      pageDto = new PageDto();
+    }
+
+    Pageable pageable = PageRequest.of(pageDto.getPage(), pageDto.getSizePerPage(), pageDto.getSortDirection(), pageDto.getSortField().getFieldName());
 
     if (pageDto.getFilterTags() != null && !pageDto.getFilterTags().isEmpty()) {
       privateFiles = storedFileRepository.findByUserNameAndVisibilityAndTagsIn(userName,
-          Visibility.PRIVATE, pageDto.getFilterTags());
+          Visibility.PRIVATE, pageDto.getFilterTags(), pageable);
       publicFiles = storedFileRepository.findByVisibilityAndTagsIn(Visibility.PUBLIC,
-          pageDto.getFilterTags());
+          pageDto.getFilterTags(), pageable);
     } else {
       privateFiles = storedFileRepository.findByUserNameAndVisibility(userName,
-          Visibility.PRIVATE);
-      publicFiles = storedFileRepository.findByVisibility(Visibility.PUBLIC);
+          Visibility.PRIVATE, pageable);
+      publicFiles = storedFileRepository.findByVisibility(Visibility.PUBLIC, pageable);
     }
 
     return StoredFileResponseDto.builder()
         .userName(userName)
-        .publicFiles(StoredFileMapper.toStoredFileList(publicFiles, downloadPath))
         .privateFiles(StoredFileMapper.toStoredFileList(privateFiles, downloadPath))
+        .totalPrivateFiles(privateFiles.getTotalElements())
+        .publicFiles(StoredFileMapper.toStoredFileList(publicFiles, downloadPath))
+        .totalPublicFiles(publicFiles.getTotalElements())
         .build();
   }
 

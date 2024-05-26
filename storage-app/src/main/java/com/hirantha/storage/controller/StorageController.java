@@ -39,7 +39,7 @@ public class StorageController {
 
   @PostMapping("/list")
   public StoredFileResponseDto listFiles(@RequestHeader("X-User-Name") String userName,
-      @RequestBody PageDto pageDto) {
+      @RequestBody(required = false) PageDto pageDto) {
     return storageService.listFiles(userName, pageDto);
   }
 

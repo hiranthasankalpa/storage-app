@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum SortField {
+
   FILE_NAME("fileName"),
   UPLOADED_DATE("uploadedDate"),
   TAGS("tags"),

@@ -3,6 +3,8 @@ package com.hirantha.storage.repository;
 import com.hirantha.storage.enums.Visibility;
 import com.hirantha.storage.model.StoredFile;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface StoredFileRepository extends MongoRepository<StoredFile, String> {
@@ -11,13 +13,13 @@ public interface StoredFileRepository extends MongoRepository<StoredFile, String
 
   List<StoredFile> findByFileSize(long size);
 
-  List<StoredFile> findByUserNameAndVisibility(String userName, Visibility visibility);
+  Page<StoredFile> findByUserNameAndVisibility(String userName, Visibility visibility, Pageable pageable);
 
-  List<StoredFile> findByVisibility(Visibility visibility);
+  Page<StoredFile> findByVisibility(Visibility visibility, Pageable pageable);
 
-  List<StoredFile> findByUserNameAndVisibilityAndTagsIn(String userName, Visibility visibility,
-      List<String> tags);
+  Page<StoredFile> findByUserNameAndVisibilityAndTagsIn(String userName, Visibility visibility,
+      List<String> tags, Pageable pageable);
 
-  List<StoredFile> findByVisibilityAndTagsIn(Visibility visibility, List<String> tags);
+  Page<StoredFile> findByVisibilityAndTagsIn(Visibility visibility, List<String> tags, Pageable pageable);
 
 }

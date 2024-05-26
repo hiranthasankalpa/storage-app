@@ -16,4 +16,8 @@ public class StoredFileResponseDto {
 
   List<StoredFileDto> publicFiles;
 
+  long totalPublicFiles;
+
+  long totalPrivateFiles;
+
 }
