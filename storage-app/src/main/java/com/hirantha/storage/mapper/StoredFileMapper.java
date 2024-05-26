@@ -2,6 +2,7 @@ package com.hirantha.storage.mapper;
 
 import com.hirantha.storage.dto.StoredFileDto;
 import com.hirantha.storage.model.StoredFile;
+import java.util.List;
 
 public class StoredFileMapper {
 
@@ -20,18 +21,23 @@ public class StoredFileMapper {
         .build();
   }
 
-//  public static StoredFile toStoredFile(StoredFileDto storedFileDto) {
-//    return StoredFile.builder()
-//        .id(storedFileDto.getId())
-//        .userName(storedFileDto.getUserName())
-//        .fileName(storedFileDto.getFileName())
-//        .fileType(storedFileDto.getFileType())
-//        .fileSize(storedFileDto.getFileSize())
-//        .fileLink(storedFileDto.getFileLink())
-//        .tags(storedFileDto.getTags())
-//        .visibility(storedFileDto.getVisibility())
-//        .uplodedDate(storedFileDto.getUplodedDate())
-//        .modifiedDate(storedFileDto.getModifiedDate())
-//        .build();
-//  }
+  public static StoredFileDto toStoredFilesForDownload(StoredFile storedFile, String path) {
+    return StoredFileDto.builder()
+        .id(storedFile.getId())
+        .fileName(storedFile.getFileName())
+        .fileType(storedFile.getFileType())
+        .fileSize(storedFile.getFileSize())
+        .fileLink(path + storedFile.getId())
+        .tags(storedFile.getTags())
+        .visibility(storedFile.getVisibility())
+        .uplodedDate(storedFile.getUplodedDate())
+        .modifiedDate(storedFile.getModifiedDate())
+        .build();
+  }
+
+  public static List<StoredFileDto> toStoredFileList(List<StoredFile> storedFiles, String path) {
+    return storedFiles.stream()
+        .map((StoredFile storedFile) -> toStoredFilesForDownload(storedFile, path)).toList();
+  }
+
 }

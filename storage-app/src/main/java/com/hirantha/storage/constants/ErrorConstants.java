@@ -10,6 +10,7 @@ public final class ErrorConstants {
   public static final String FILE_NAME_EXISTS = "File already exists with the provided name.";
   public static final String FILE_CONTENT_EXISTS = "File already exists with similar content.";
   public static final String NO_SUCH_FILE = "File not present!";
+  public static final String ERROR_CREATING_FILE = "Error occurred while creating file!";
   public static final String FILE_NOT_FOUND = "File not found on disk!";
 
   private ErrorConstants() {

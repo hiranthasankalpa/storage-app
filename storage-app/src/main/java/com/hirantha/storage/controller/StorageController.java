@@ -3,9 +3,9 @@ package com.hirantha.storage.controller;
 import com.hirantha.storage.dto.StoredFileDto;
 import com.hirantha.storage.dto.StoredFileResponseDto;
 import com.hirantha.storage.service.StorageService;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,11 +23,10 @@ public class StorageController {
 
   private final StorageService storageService;
 
-  @PostMapping("/upload")
+  @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public StoredFileDto uploadFile(@RequestHeader("X-User-Name") String userName,
       @RequestPart("file") MultipartFile file, @RequestPart("file-name") String fileName,
-      @RequestPart("tags") String tags, @RequestPart("visibility") String visibility)
-      throws IOException {
+      @RequestPart("tags") String tags, @RequestPart("visibility") String visibility) {
     return storageService.uploadFile(userName, file, fileName, tags, visibility);
   }
 
@@ -36,9 +35,9 @@ public class StorageController {
     return storageService.downloadFile(id);
   }
 
-  @GetMapping("/getAll")
-  public StoredFileResponseDto getAllFiles(@RequestHeader("X-User-Name") String userName) {
-    return storageService.getAllFiles(userName);
+  @PostMapping("/list")
+  public StoredFileResponseDto listFiles(@RequestHeader("X-User-Name") String userName) {
+    return storageService.listFiles(userName);
   }
 
 }

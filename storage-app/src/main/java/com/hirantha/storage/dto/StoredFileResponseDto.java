@@ -12,8 +12,8 @@ public class StoredFileResponseDto {
 
   String userName;
 
-  List<String> privateFiles;
+  List<StoredFileDto> privateFiles;
 
-  List<String> publicFiles;
+  List<StoredFileDto> publicFiles;
 
 }

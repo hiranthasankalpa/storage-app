@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class StorageServiceImpl implements StorageService {
 
   @Override
   public StoredFileDto uploadFile(String userName, MultipartFile file, String fileName, String tags,
-      String visibility) throws IOException {
+      String visibility) {
 
     validateInputs(userName, file, fileName, tags, visibility);
 
@@ -62,31 +61,42 @@ public class StorageServiceImpl implements StorageService {
     File directory = new File(filePath);
     if (!directory.exists()) {
       boolean done = directory.mkdirs();
-      log.info(String.valueOf(done));
+      if (!done) {
+        log.error("Directory could not be created");
+        throw new ApiException(ErrorConstants.ERROR_CREATING_FILE,
+            HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
 
     filePath += "/" + fileName;
 
-    StoredFile storedFile = StoredFile.builder()
-        .userName(userName)
-        .fileName(fileName)
-        .fileType(tika.detect(file.getInputStream()))
-        .fileSize(file.getSize())
-        .fileLink(filePath)
-        .tags(Arrays.asList(tags.split(",", -1)))
-        .visibility(Visibility.valueOf(visibility))
-        .build();
+    StoredFile storedFile;
+    try {
+      storedFile = StoredFile.builder()
+          .userName(userName)
+          .fileName(fileName)
+          .fileType(tika.detect(file.getInputStream()))
+          .fileSize(file.getSize())
+          .fileLink(filePath)
+          .tags(Arrays.asList(tags.split(",", -1)))
+          .visibility(Visibility.valueOf(visibility))
+          .build();
 
-    file.transferTo(new File(filePath));
+      file.transferTo(new File(filePath));
+    } catch (IOException ex) {
+      log.error("File could not be created");
+      throw new ApiException(ErrorConstants.ERROR_CREATING_FILE, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     return StoredFileMapper.toStoredFileDto(storedFileRepository.save(storedFile));
   }
 
+  @Override
   public ResponseEntity<InputStreamResource> downloadFile(String id) {
 
     Optional<StoredFile> storedFileOptional = storedFileRepository.findById(id);
 
-    if (!storedFileOptional.isPresent()) {
+    if (storedFileOptional.isEmpty()) {
       throw new ApiException(ErrorConstants.NO_SUCH_FILE, HttpStatus.BAD_REQUEST);
     }
 
@@ -104,28 +114,19 @@ public class StorageServiceImpl implements StorageService {
         .body(resource);
   }
 
-  public StoredFileResponseDto getAllFiles(String userName) {
+  @Override
+  public StoredFileResponseDto listFiles(String userName) {
     final String downloadPath = "http://localhost:" + port + path + "/files/download" + "/";
 
     List<StoredFile> privateFiles = storedFileRepository.findByUserNameAndVisibility(userName,
         Visibility.PRIVATE);
     List<StoredFile> publicFiles = storedFileRepository.findByVisibility(Visibility.PUBLIC);
 
-    StoredFileResponseDto storedFileResponseDto = StoredFileResponseDto.builder()
+    return StoredFileResponseDto.builder()
         .userName(userName)
-        .publicFiles(new ArrayList<>())
-        .privateFiles(new ArrayList<>())
+        .publicFiles(StoredFileMapper.toStoredFileList(publicFiles, downloadPath))
+        .privateFiles(StoredFileMapper.toStoredFileList(privateFiles, downloadPath))
         .build();
-
-    for (StoredFile file : privateFiles) {
-      storedFileResponseDto.getPrivateFiles().add(downloadPath + file.getId());
-    }
-
-    for (StoredFile file : publicFiles) {
-      storedFileResponseDto.getPublicFiles().add(downloadPath + file.getId());
-    }
-
-    return storedFileResponseDto;
   }
 
   private void validateInputs(String userName, MultipartFile file, String fileName, String tags,
