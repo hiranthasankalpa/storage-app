@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "61b8bc2c-7a7c-44bb-a205-c8bc570d269c",
+		"name": "Storage App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4832085",
+		"_collection_link": "https://speeding-satellite-24923.postman.co/workspace/MyAhmed~beca972f-cf87-4a07-88c3-5e914c102008/collection/4832085-61b8bc2c-7a7c-44bb-a205-c8bc570d269c?action=share&source=collection_link&creator=4832085"
+	},
+	"item": [
+		{
+			"name": "List Files",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-User-Name",
+						"value": "{{user-name}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"page\": 0,\r\n    \"sizePerPage\": 5,\r\n    \"filterTags\": [\"aaa\", \"bbb\"],\r\n    \"sortField\": \"FILE_SIZE\",   // FILE_NAME, UPLOADED_DATE, TAGS, FILE_TYPE, FILE_SIZE\r\n    \"sortDirection\":  \"DESC\"    // ASC, DESC\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/storage-app/files/list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"storage-app",
+						"files",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download File",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/storage-app/files/download/665379bd90b8480a414bd9eb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"storage-app",
+						"files",
+						"download",
+						"665379bd90b8480a414bd9eb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Files",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "{{user-name}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/hiran/Downloads/upload/fff.txt"
+						},
+						{
+							"key": "tags",
+							"value": "fff,ggg,kkk",
+							"contentType": "",
+							"type": "text"
+						},
+						{
+							"key": "file-name",
+							"value": "fff.txt",
+							"type": "text"
+						},
+						{
+							"key": "visibility",
+							"value": "PUBLIC",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/storage-app/files/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"storage-app",
+						"files",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rename File",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-User-Name",
+						"value": "{{user-name}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"6653ad474cf6136eb475456f\",\r\n    \"fileName\": \"hhh.txt\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/storage-app/files/rename",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"storage-app",
+						"files",
+						"rename"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete File",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-User-Name",
+						"value": "{{user-name}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/storage-app/files/delete/6653ad474cf6136eb475456f",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"storage-app",
+						"files",
+						"delete",
+						"6653ad474cf6136eb475456f"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
