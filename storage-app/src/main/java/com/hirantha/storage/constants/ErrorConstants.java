@@ -1,5 +1,11 @@
 package com.hirantha.storage.constants;
 
+import lombok.NoArgsConstructor;
+
+/**
+ * This file contains the constant messages provided to the user on API Exceptions
+ */
+@NoArgsConstructor
 public final class ErrorConstants {
 
   public static final String INVALID_USER_NAME = "User name invalid!";
@@ -16,6 +22,4 @@ public final class ErrorConstants {
   public static final String ERROR_DELETING_FILE = "Error occurred while deleting file!";
   public static final String TOO_MANY_TAGS = "More than five tags are not allowed!";
 
-  private ErrorConstants() {
-  }
 }
