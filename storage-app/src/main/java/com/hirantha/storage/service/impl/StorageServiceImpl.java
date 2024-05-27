@@ -166,7 +166,8 @@ public class StorageServiceImpl implements StorageService {
     InputStreamResource resource;
     try {
       resource = new InputStreamResource(new FileInputStream(storedFile.getFileLink()));
-    } catch (FileNotFoundException e) {
+    } catch (FileNotFoundException ex) {
+      log.debug(ex.getMessage());
       throw new ApiException(ErrorConstants.FILE_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

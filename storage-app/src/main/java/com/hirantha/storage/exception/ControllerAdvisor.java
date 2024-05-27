@@ -14,7 +14,7 @@ public class ControllerAdvisor {
   public ResponseEntity<Object> handleApiException(ApiException exception) {
 
     log.error("ApiException occurred due to: {}", exception.toString());
-    log.error(ExceptionUtils.getStackTrace(exception));
+    log.debug(ExceptionUtils.getStackTrace(exception));
     return new ResponseEntity<>(exception.getMessage(), exception.getHttpStatus());
 
   }
